@@ -1,3 +1,141 @@
+## 计算机基础
+
+### 网络
+
+#### http和https有什么区别？
+
+HTTPS和HTTP的区别主要如下：
+
+1、https协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。
+
+2、http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议。
+
+3、http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
+
+4、http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
+
+注：SSL(Secure Sockets Layer [安全套接层](https://baike.baidu.com/item/%E5%AE%89%E5%85%A8%E5%A5%97%E6%8E%A5%E5%B1%82))，SSL协议位于[TCP/IP协议](https://baike.baidu.com/item/TCP%2FIP%E5%8D%8F%E8%AE%AE)与各种[应用层](https://baike.baidu.com/item/%E5%BA%94%E7%94%A8%E5%B1%82)协议之间，为[数据通讯](https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E9%80%9A%E8%AE%AF)提供安全支持。SSL协议可分为两层： SSL记录协议（SSL Record Protocol）：它建立在可靠的[传输协议](https://baike.baidu.com/item/%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE)（如TCP）之上，为高层协议提供[数据封装](https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E5%B0%81%E8%A3%85)、压缩、加密等基本功能的支持。 SSL[握手协议](https://baike.baidu.com/item/%E6%8F%A1%E6%89%8B%E5%8D%8F%E8%AE%AE)（SSL Handshake Protocol）：它建立在SSL记录协议之上，用于在实际的数据传输开始前，通讯双方进行[身份认证](https://baike.baidu.com/item/%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81)、协商[加密算法](https://baike.baidu.com/item/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95)、交换加密[密钥](https://baike.baidu.com/item/%E5%AF%86%E9%92%A5)等。
+
+
+
+## java基础
+
+### 基础知识
+
+#### 1.Obect类有哪些方法？
+
+#### 2.sleep和wait方法的区别？
+
+1.sleep属于Thread类的。wait属于Object类的
+
+2.sleep方法导致是线程暂停执行指定时间，让出cpu给其他线程，但是它的状态依然保持着，当指定的时间到了之后有自动恢复到运行状态。
+
+ 3.在调用sleep方法的过程中，线程不会释放对象锁。 而当调用wait方法的时候，线程会放弃对象锁，进入等待此对象的等待锁定池。只有针对此对象调用notify方法后，本线程才进入对象锁定池准备获取对象锁进入运行状态。
+
+
+
+### JVM 
+
+#### 1. Jvm的内存模型是什么？java的内存模型？
+
+java并发内存模型
+
+java试图定义一个Java内存模型(Java memory model JMM)来屏蔽掉各种硬件/操作系统的内存访问差异，以实现让java程序在各个平台下都能达到一致的内存访问效果。java内存模型主要目标是定义程序中各个变量的访问规则，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节。模型图如下
+
+![img](https://images2015.cnblogs.com/blog/286989/201611/286989-20161124093612487-2048767455.jpg)
+
+java内存模型中规定了所有变量都存贮到主内存（如虚拟机物理内存中的一部分）中。每一个线程都有一个自己的工作内存(如cpu中的高速缓存)。线程中的工作内存保存了该线程使用到的变量的主内存的副本拷贝。线程对变量的所有操作（读取、赋值等）必须在该线程的工作内存中进行。不同线程之间无法直接访问对方工作内存中变量。线程间变量的值传递均需要通过主内存来完成。
+
+关于主内存与工作内存之间的交互协议，即一个变量如何从主内存拷贝到工作内存。如何从工作内存同步到主内存中的实现细节。java内存模型定义了8种操作来完成。这8种操作每一种都是原子操作。8种操作如下：
+
+- lock(锁定)：作用于主内存，它把一个变量标记为一条线程独占状态；
+- unlock(解锁)：作用于主内存，它将一个处于锁定状态的变量释放出来，释放后的变量才能够被其他线程锁定；
+- read(读取)：作用于主内存，它把变量值从主内存传送到线程的工作内存中，以便随后的load动作使用；
+- load(载入)：作用于工作内存，它把read操作的值放入工作内存中的变量副本中；
+- use(使用)：作用于工作内存，它把工作内存中的值传递给执行引擎，每当虚拟机遇到一个需要使用这个变量的指令时候，将会执行这个动作；
+- assign(赋值)：作用于工作内存，它把从执行引擎获取的值赋值给工作内存中的变量，每当虚拟机遇到一个给变量赋值的指令时候，执行该操作；
+- store(存储)：作用于工作内存，它把工作内存中的一个变量传送给主内存中，以备随后的write操作使用；
+- write(写入)：作用于主内存，它把store传送值放到主内存中的变量中。
+
+Java内存模型还规定了执行上述8种基本操作时必须满足如下规则:
+
+- 不允许read和load、store和write操作之一单独出现，以上两个操作必须按顺序执行，但没有保证必须连续执行，也就是说，read与load之间、store与write之间是可插入其他指令的。
+- 不允许一个线程丢弃它的最近的assign操作，即变量在工作内存中改变了之后必须把该变化同步回主内存。
+- 不允许一个线程无原因地（没有发生过任何assign操作）把数据从线程的工作内存同步回主内存中。
+- 一个新的变量只能从主内存中“诞生”，不允许在工作内存中直接使用一个未被初始化（load或assign）的变量，换句话说就是对一个变量实施use和store操作之前，必须先执行过了assign和load操作。
+- 一个变量在同一个时刻只允许一条线程对其执行lock操作，但lock操作可以被同一个条线程重复执行多次，多次执行lock后，只有执行相同次数的unlock操作，变量才会被解锁。
+- 如果对一个变量执行lock操作，将会清空工作内存中此变量的值，在执行引擎使用这个变量前，需要重新执行load或assign操作初始化变量的值。
+- 如果一个变量实现没有被lock操作锁定，则不允许对它执行unlock操作，也不允许去unlock一个被其他线程锁定的变量。
+- 对一个变量执行unlock操作之前，必须先把此变量同步回主内存（执行store和write操作）。
+
+#### 2. jvm采用什么垃圾收集器？G1和CMS有什么好处？
+
+jdk1.7 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）
+
+jdk1.8 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）
+
+jdk1.9 默认垃圾收集器G1
+
+**评价垃圾回收质量的两个指标：**
+
+- 停顿时间
+
+- 吞吐量
+
+  G1有着更可控的pause time 和 更大的throughput，所以g1在java9 便是默认的垃圾收集器，是cms 的替代
+
+垃圾收集常用参数
+
+| 参数                           | 描述                                                         |
+| ------------------------------ | ------------------------------------------------------------ |
+| UseSerialGC                    | 虚拟机运行在Client模式下的默认值，打开此开关后，使用Serial + Serial Old的收集器组合进行内存回收 |
+| UseParNewGC                    | 打开此开关后，使用ParNew + Serial Old的收集器组合进行内存回收 |
+| UseConcMarkSweepGC             | 打开此开关后，使用ParNew + CMS + Serial Old的收集器组合进行内存回收。Serial Old收集器将作为CMS收集器出现Concurrent Mode Failure失败后的后备收集器使用 |
+| **UseParallelGC**              | **虚拟机运行在Server模式下的默认值，打开此开关后，使用Parallel Scavenge + Serial Old（PS MarkSweep）的收集器组合进行内存回收** |
+| UseParallelOldGC               | 打开此开关后，使用Parallel Scavenge + Parallel Old 的收集器组合进行内存回收 |
+| SurvivorRatio                  | 新生代中Eden区域与Survivor区域的容量比值，默认为8，代表Eden : Survivor=8:1 |
+| PretenureSizeThreshold         | 直接晋升到老年代的对象大小，设置这个参数后，大于这个参数的对象将直接在老年代分配 |
+| MaxTenuringThreshold           | 晋升到老年代的对象年龄。每个对象在坚持过一次Minor GC之后，年龄就增加1，当超过这个参数值时就进入老年代 |
+| UseAdaptiveSizePolicy          | 动态调整Java堆中各个区域的大小以及进入老年代的年龄           |
+| HandlePromotionFailure         | 是否允许分配担保失败，即老年代的剩余空间不足以应付新生代的整个Eden和Survivor区的所有对象都存活的极端情况 |
+| ParallelGCThreads              | 设置并行GC时进行内存回收的线程数                             |
+| GCTimeRatio                    | GC时间占总时间的比率，默认值为99，即允许1%的GC时间。仅使用Parallel Scavenge收集器时生效 |
+| MaxGCPauseMillis               | 设置GC的最大停顿时间。仅在使用Parallel Scavenge收集器生效    |
+| CMSInitiatingOccupancyFraction | 设置CMS收集器在老年代空间被使用多少后触发垃圾收集，默认值为68%，仅使用CMS收集器时生效 |
+| UseCMSCompactAtFullCollection  | 设置CMS收集器在完成垃圾收集后是否要进行一次内存碎片整理。仅在使用CMS收集器时生效 |
+| CMSFullGCsBeforeCompaction     | 设置CMS收集器在进行若干次垃圾收集后再启动一次内存碎片整理。仅在使用CMS收集器时生效 |
+
+#### 3.什么情况下发生fullGC ?怎么样避免fullGC 
+
+#### 4.查询gc情况采用什么命令？如果cpu过高，但是jvm内存使用正常？哪些情况会引起？怎么排查？
+
+Linux使用jstat命令查看jvm的GC情况  
+
+```shell
+jstat [ generalOption | outputOptions vmid [interval[s|ms] [count]] ]
+```
+
+我们一般使用 -gcutil 查看gc情况 。vmid，VM的进程号，即当前运行的java进程号. interval，间隔时间，单位为秒或者毫秒
+
+ vmid是虚拟机ID，在Linux/Unix系统上一般就是进程ID。interval是采样时间间隔。count是采样数目。比如下面输出的是GC信息，采样时间间隔为250ms，采样数为4：
+
+```shell
+jstat -gc 21711 250 4
+```
+
+
+
+jvm在疯狂的Full GC 会导致cpu过高？
+
+1. 执行top -c命令，找到cpu最高的进程的id
+2.  执行top -H -p pid，这个命令就能显示刚刚找到的进程的所有线程的资源消耗情况。找到CPU负载高的线程tid 8627, 把这个数字转换成16进制，21B3（10进制转16进制，用linux命令: printf %x 8627）。
+3. 执行jstack -l pid，拿到进程的线程dump文件。这个命令会打出这个进程的所有线程的运行堆栈。
+4. 用记事本打开这个文件，搜索“21B3”，就是搜一下16进制显示的线程id。搜到后，下面的堆栈就是这个线程打出来的。排查问题从这里深入。
+
+
+
+
+
 ## 主流框架
 
 ### Spring
@@ -100,8 +238,7 @@ Spring在容器启动阶段或者销毁阶段，提供了相关的事件通知�
 
 **最后，Spring消息消费可以控制异步或者同步执行，而正确的使用消息机制对于代码的逻辑控制将会非常的灵活。**
 
-
-spring默认的事物传播方式？具体什么意思？
+#### spring默认的事物传播方式？具体什么意思？
 
 ### mybais
 
@@ -122,121 +259,6 @@ mybatis中有两个常见的#和$符号，在进行变量的赋值的时候是�
 ### Spring Boot
 
 #### spring boot的启动机制说一下。
-
-
-
-## 计算机基础
-
-### 网络
-
-#### http和https有什么区别？
-
-HTTPS和HTTP的区别主要如下：
-
-1、https协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。
-
-2、http是超文本传输协议，信息是明文传输，https则是具有安全性的ssl加密传输协议。
-
-3、http和https使用的是完全不同的连接方式，用的端口也不一样，前者是80，后者是443。
-
-4、http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。
-
-注：SSL(Secure Sockets Layer [安全套接层](https://baike.baidu.com/item/%E5%AE%89%E5%85%A8%E5%A5%97%E6%8E%A5%E5%B1%82))，SSL协议位于[TCP/IP协议](https://baike.baidu.com/item/TCP%2FIP%E5%8D%8F%E8%AE%AE)与各种[应用层](https://baike.baidu.com/item/%E5%BA%94%E7%94%A8%E5%B1%82)协议之间，为[数据通讯](https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E9%80%9A%E8%AE%AF)提供安全支持。SSL协议可分为两层： SSL记录协议（SSL Record Protocol）：它建立在可靠的[传输协议](https://baike.baidu.com/item/%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE)（如TCP）之上，为高层协议提供[数据封装](https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E5%B0%81%E8%A3%85)、压缩、加密等基本功能的支持。 SSL[握手协议](https://baike.baidu.com/item/%E6%8F%A1%E6%89%8B%E5%8D%8F%E8%AE%AE)（SSL Handshake Protocol）：它建立在SSL记录协议之上，用于在实际的数据传输开始前，通讯双方进行[身份认证](https://baike.baidu.com/item/%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81)、协商[加密算法](https://baike.baidu.com/item/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95)、交换加密[密钥](https://baike.baidu.com/item/%E5%AF%86%E9%92%A5)等。
-
-## java基础
-
-### 基础知识
-
-#### 1.Obect类有哪些方法？
-
-#### 2.sleep和wait方法的区别？
-
-1.sleep属于Thread类的。wait属于Object类的
-
-2.sleep方法导致是线程暂停执行指定时间，让出cpu给其他线程，但是它的状态依然保持着，当指定的时间到了之后有自动恢复到运行状态。
-
- 3.在调用sleep方法的过程中，线程不会释放对象锁。 而当调用wait方法的时候，线程会放弃对象锁，进入等待此对象的等待锁定池。只有针对此对象调用notify方法后，本线程才进入对象锁定池准备获取对象锁进入运行状态。
-
-
-
-### JVM 
-
-#### 1. Jvm的内存模型是什么？java的内存模型？
-
-java并发内存模型
-
-java试图定义一个Java内存模型(Java memory model JMM)来屏蔽掉各种硬件/操作系统的内存访问差异，以实现让java程序在各个平台下都能达到一致的内存访问效果。java内存模型主要目标是定义程序中各个变量的访问规则，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节。模型图如下
-
-![img](https://images2015.cnblogs.com/blog/286989/201611/286989-20161124093612487-2048767455.jpg)
-
-java内存模型中规定了所有变量都存贮到主内存（如虚拟机物理内存中的一部分）中。每一个线程都有一个自己的工作内存(如cpu中的高速缓存)。线程中的工作内存保存了该线程使用到的变量的主内存的副本拷贝。线程对变量的所有操作（读取、赋值等）必须在该线程的工作内存中进行。不同线程之间无法直接访问对方工作内存中变量。线程间变量的值传递均需要通过主内存来完成。
-
-关于主内存与工作内存之间的交互协议，即一个变量如何从主内存拷贝到工作内存。如何从工作内存同步到主内存中的实现细节。java内存模型定义了8种操作来完成。这8种操作每一种都是原子操作。8种操作如下：
-
-- lock(锁定)：作用于主内存，它把一个变量标记为一条线程独占状态；
-- unlock(解锁)：作用于主内存，它将一个处于锁定状态的变量释放出来，释放后的变量才能够被其他线程锁定；
-- read(读取)：作用于主内存，它把变量值从主内存传送到线程的工作内存中，以便随后的load动作使用；
-- load(载入)：作用于工作内存，它把read操作的值放入工作内存中的变量副本中；
-- use(使用)：作用于工作内存，它把工作内存中的值传递给执行引擎，每当虚拟机遇到一个需要使用这个变量的指令时候，将会执行这个动作；
-- assign(赋值)：作用于工作内存，它把从执行引擎获取的值赋值给工作内存中的变量，每当虚拟机遇到一个给变量赋值的指令时候，执行该操作；
-- store(存储)：作用于工作内存，它把工作内存中的一个变量传送给主内存中，以备随后的write操作使用；
-- write(写入)：作用于主内存，它把store传送值放到主内存中的变量中。
-
-Java内存模型还规定了执行上述8种基本操作时必须满足如下规则:
-
-- 不允许read和load、store和write操作之一单独出现，以上两个操作必须按顺序执行，但没有保证必须连续执行，也就是说，read与load之间、store与write之间是可插入其他指令的。
-- 不允许一个线程丢弃它的最近的assign操作，即变量在工作内存中改变了之后必须把该变化同步回主内存。
-- 不允许一个线程无原因地（没有发生过任何assign操作）把数据从线程的工作内存同步回主内存中。
-- 一个新的变量只能从主内存中“诞生”，不允许在工作内存中直接使用一个未被初始化（load或assign）的变量，换句话说就是对一个变量实施use和store操作之前，必须先执行过了assign和load操作。
-- 一个变量在同一个时刻只允许一条线程对其执行lock操作，但lock操作可以被同一个条线程重复执行多次，多次执行lock后，只有执行相同次数的unlock操作，变量才会被解锁。
-- 如果对一个变量执行lock操作，将会清空工作内存中此变量的值，在执行引擎使用这个变量前，需要重新执行load或assign操作初始化变量的值。
-- 如果一个变量实现没有被lock操作锁定，则不允许对它执行unlock操作，也不允许去unlock一个被其他线程锁定的变量。
-- 对一个变量执行unlock操作之前，必须先把此变量同步回主内存（执行store和write操作）。
-
-#### 2. jvm采用什么垃圾收集器？G1和CMS有什么好处？
-
-jdk1.7 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）
-
-jdk1.8 默认垃圾收集器Parallel Scavenge（新生代）+Parallel Old（老年代）
-
-jdk1.9 默认垃圾收集器G1
-
-**评价垃圾回收质量的两个指标：**
-
-- 停顿时间
-
-- 吞吐量
-
-  G1有着更可控的pause time 和 更大的throughput，所以g1在java9 便是默认的垃圾收集器，是cms 的替代
-
-垃圾收集常用参数
-
-| 参数                           | 描述                                                         |
-| ------------------------------ | ------------------------------------------------------------ |
-| UseSerialGC                    | 虚拟机运行在Client模式下的默认值，打开此开关后，使用Serial + Serial Old的收集器组合进行内存回收 |
-| UseParNewGC                    | 打开此开关后，使用ParNew + Serial Old的收集器组合进行内存回收 |
-| UseConcMarkSweepGC             | 打开此开关后，使用ParNew + CMS + Serial Old的收集器组合进行内存回收。Serial Old收集器将作为CMS收集器出现Concurrent Mode Failure失败后的后备收集器使用 |
-| **UseParallelGC**              | **虚拟机运行在Server模式下的默认值，打开此开关后，使用Parallel Scavenge + Serial Old（PS MarkSweep）的收集器组合进行内存回收** |
-| UseParallelOldGC               | 打开此开关后，使用Parallel Scavenge + Parallel Old 的收集器组合进行内存回收 |
-| SurvivorRatio                  | 新生代中Eden区域与Survivor区域的容量比值，默认为8，代表Eden : Survivor=8:1 |
-| PretenureSizeThreshold         | 直接晋升到老年代的对象大小，设置这个参数后，大于这个参数的对象将直接在老年代分配 |
-| MaxTenuringThreshold           | 晋升到老年代的对象年龄。每个对象在坚持过一次Minor GC之后，年龄就增加1，当超过这个参数值时就进入老年代 |
-| UseAdaptiveSizePolicy          | 动态调整Java堆中各个区域的大小以及进入老年代的年龄           |
-| HandlePromotionFailure         | 是否允许分配担保失败，即老年代的剩余空间不足以应付新生代的整个Eden和Survivor区的所有对象都存活的极端情况 |
-| ParallelGCThreads              | 设置并行GC时进行内存回收的线程数                             |
-| GCTimeRatio                    | GC时间占总时间的比率，默认值为99，即允许1%的GC时间。仅使用Parallel Scavenge收集器时生效 |
-| MaxGCPauseMillis               | 设置GC的最大停顿时间。仅在使用Parallel Scavenge收集器生效    |
-| CMSInitiatingOccupancyFraction | 设置CMS收集器在老年代空间被使用多少后触发垃圾收集，默认值为68%，仅使用CMS收集器时生效 |
-| UseCMSCompactAtFullCollection  | 设置CMS收集器在完成垃圾收集后是否要进行一次内存碎片整理。仅在使用CMS收集器时生效 |
-| CMSFullGCsBeforeCompaction     | 设置CMS收集器在进行若干次垃圾收集后再启动一次内存碎片整理。仅在使用CMS收集器时生效 |
-
-#### 3.什么情况下发生fullGC ?怎么样避免fullGC 
-
-#### 4.查询gc情况采用什么命令？如果cpu过高，但是jvm内存使用正常？哪些情况会引起？怎么排查？
-
-
-
-
 
 
 
@@ -409,7 +431,11 @@ Bean的生命周期：
 
 #### dubbo可以服务分组吗？有什么作用？
 
-#### Solr
+
+
+
+
+### Solr
 
 #### solr分词机制
 
